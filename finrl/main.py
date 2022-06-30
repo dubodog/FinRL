@@ -3,7 +3,7 @@ from typing import List
 from argparse import ArgumentParser
 from finrl import config
 from finrl.config_tickers import DOW_30_TICKER
-from finrl.config_private import (ALPACA_API_KEY,ALPACA_API_SECRET)
+from finrl.config_private import (ALPACA_API_KEY,ALPACA_API_SECRET,MY_FAVOURITE_TICKER,MY_STOCK_HOLDINGS)
 from finrl.config import (
     DATA_SAVE_DIR,
     TRAINED_MODEL_DIR,
@@ -50,6 +50,8 @@ def main():
     parser = build_parser()
     options = parser.parse_args()
     check_and_make_directories([DATA_SAVE_DIR, TRAINED_MODEL_DIR, TENSORBOARD_LOG_DIR, RESULTS_DIR])
+    stocks = MY_STOCK_HOLDINGS
+    techs = INDICATORS
 
     if options.mode == "train":
         from finrl import train
@@ -61,10 +63,10 @@ def main():
         train(
             start_date=TRAIN_START_DATE,
             end_date=TRAIN_END_DATE,
-            ticker_list=DOW_30_TICKER,
+            ticker_list=stocks,
             data_source="yahoofinance",
             time_interval="1D",
-            technical_indicator_list=INDICATORS,
+            technical_indicator_list=techs,
             drl_lib="elegantrl",
             env=env,
             model_name="ppo",
@@ -83,10 +85,10 @@ def main():
         account_value_erl = test(
             start_date=TEST_START_DATE,
             end_date=TEST_END_DATE,
-            ticker_list=DOW_30_TICKER,
+            ticker_list=stocks,
             data_source="yahoofinance",
             time_interval="1D",
-            technical_indicator_list=INDICATORS,
+            technical_indicator_list=techs,
             drl_lib="elegantrl",
             env=env,
             model_name="ppo",
@@ -101,10 +103,10 @@ def main():
         trade(
             start_date=TRADE_START_DATE,
             end_date=TRADE_END_DATE,
-            ticker_list=DOW_30_TICKER,
+            ticker_list=stocks,
             data_source="yahoofinance",
             time_interval="1D",
-            technical_indicator_list=INDICATORS,
+            technical_indicator_list=techs,
             drl_lib="elegantrl",
             env=env,
             model_name="ppo",
@@ -114,8 +116,8 @@ def main():
             trade_mode='paper_trading',
             if_vix=True,
             kwargs=kwargs,
-            state_dim=len(DOW_30_TICKER) * (len(INDICATORS) + 3) + 3,#bug fix: for ppo add dimension of state/observations space =  len(stocks)* len(INDICATORS) + 3+ 3*len(stocks)
-            action_dim=len(DOW_30_TICKER)#bug fix: for ppo add dimension of action space = len(stocks)
+            state_dim=len(stocks) * (len(techs) + 3) + 3,#bug fix: for ppo add dimension of state/observations space =  len(stocks)* len(INDICATORS) + 3+ 3*len(stocks)
+            action_dim=len(stocks)#bug fix: for ppo add dimension of action space = len(stocks)
         )
     else:
         raise ValueError("Wrong mode.")
