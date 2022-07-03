@@ -3,7 +3,7 @@ from typing import List
 from argparse import ArgumentParser
 from finrl import config
 from finrl.config_tickers import DOW_30_TICKER
-from finrl.config_private import (ALPACA_API_KEY,ALPACA_API_SECRET,MY_FAVOURITE_TICKER,MY_STOCK_HOLDINGS)
+from finrl.config_private import (ALPACA_API_KEY,ALPACA_API_SECRET,MY_FAVOURITE_TICKER,MY_STOCK_HOLDINGS,SP_500_AND_ZHONGGAI_TICKER)
 from finrl.config import (
     DATA_SAVE_DIR,
     TRAINED_MODEL_DIR,
@@ -19,7 +19,11 @@ from finrl.config import (
     ERL_PARAMS,
     RLlib_PARAMS,
     SAC_PARAMS,
-    ALPACA_API_BASE_URL,
+    TD3_PARAMS,
+    DDPG_PARAMS,
+    A2C_PARAMS,
+    PPO_PARAMS,
+    ALPACA_API_BASE_URL
 )
 
 # construct environment
@@ -50,7 +54,7 @@ def main():
     parser = build_parser()
     options = parser.parse_args()
     check_and_make_directories([DATA_SAVE_DIR, TRAINED_MODEL_DIR, TENSORBOARD_LOG_DIR, RESULTS_DIR])
-    stocks = MY_STOCK_HOLDINGS
+    stocks = SP_500_AND_ZHONGGAI_TICKER
     techs = INDICATORS
 
     if options.mode == "train":
@@ -72,6 +76,8 @@ def main():
             model_name="ppo",
             cwd="./test_ppo",
             erl_params=ERL_PARAMS,
+            rllib_params=RLlib_PARAMS,
+            agent_params=PPO_PARAMS,
             break_step=1e5,
             kwargs=kwargs,
         )
@@ -105,7 +111,7 @@ def main():
             end_date=TRADE_END_DATE,
             ticker_list=stocks,
             data_source="yahoofinance",
-            time_interval="1D",
+            time_interval="1Min",
             technical_indicator_list=techs,
             drl_lib="elegantrl",
             env=env,

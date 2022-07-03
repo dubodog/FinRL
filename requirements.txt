@@ -3,10 +3,12 @@ numpy>=1.17.3
 pandas>=1.1.5
 stockstats>=0.4.0
 yfinance
-elegantrl
+#elegantrl
 #pyfolio
 # plot
 matplotlib
+dm_tree
+tensorflow
 
 # Model Building Requirements
 scikit-learn>=0.21.0
